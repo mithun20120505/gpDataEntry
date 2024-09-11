@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+          function convert(str) {
+            var date = new Date(str),
+            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+            day = ("0" + date.getDate()).slice(-2);
+            return [date.getFullYear(), mnth, day].join("-");
+      }
+    window.onload = function() {
+      //console.log("houseDate : " + <%= user.ruralHouse.houseDate %>);
+  }
+  $(document).ready(function () {
+              $("#rationType").val(<%= user.rationDetails.rationType %>);
+              $("#hasDisease").val(<%= user.healthDetails.hasDisease%> === true ? 'yes' : 'no');
+              $("#houseType").val(<%= user.ruralHouse.houseType %>);
+              // $("#houseStatus").val(<%= user.ruralHouse.houseStatus %>);
+              $("#isHandicapped").val(<%= user.isHandicapped %> === true ? "yes" : "no");
+              $("#bplStatus").val(<%= user.bplStatus %> === true ? "yes" : "no");
+              $("#insuranceStatus").val(<%= user.insuranceStatus%> === true ? "yes" : "no");
+              $("#bankAccount").val(<%= user.bankAccount%> === true ? "yes" : "no");
+              $("#cowShed").val(<%= user.cowShed %> === true ? "yes" : "no");
+              $("#hasCow").val(<%= user.hasCow %> === true ? "yes" : "no");
+              $("#landless").val(<%= user.landless %> === true ? "yes" : "no");
+              $("#drinkingWater").val(<%= user.drinkingWater %> === true ? "yes" : "no");
+
+              var rationdate= convert("<%= user.rationDetails.activatedOn %>");
+
+               $('#activatedOn').val(rationdate);
+               var housedate = convert("<%= user.ruralHouse.houseDate %>");
+               console.log("housedate " + housedate);
+               $('#houseDate').val(housedate);
+               var diseaseDate = convert("<%= user.healthDetails.diseaseDate %>");
+               $('#diseaseDate').val(diseaseDate);
+               var dob = convert("<%= user.dob %>");
+               $('#dob').val(dob);
+          });
+    </script>
+</head>
+<body>
+    <h1>Edit User</h1>
+    <form id="ediitForm" action="/update/<%= user._id %>" method="POST">
+    <div class="form-group">    <label>User Name:</label><input type="text" name="userName" value="<%= user.userName %>" readonly><br></div>
+  <div class="form-group">      <label>Father/Husband Name:</label><input type="text" name="fatherHusbandName" value="<%= user.fatherHusbandName %>" readonly><br></div>
+    <div class="form-group">    <label>Village:</label><input type="text" name="village" value="<%= user.village %>" readonly><br></div>
+    <div class="form-group">    <label>Ward:</label><input type="text" name="ward" value="<%= user.ward %>"><br></div>
+    <div class="form-group">    <label>EPIC Number:</label><input type="text" name="epicNumber" value="<%= user.epicNumber %>"><br></div>
+        <!-- Add more fields as needed -->
+    <div class="form-group">    <label>Ration No:</label><input type="text" name="rationNo" value="<%= user.rationDetails.rationNo %>"><br></div>
+    <div class="form-group">    <label>Scheme:</label><select type="text" id="rationType" name="rationType" value="<%= user.rationDetails.rationType %>"><option value="0">Select</option><option value="1">State</option>
+    <option value="2">Central</option>
+</select><br></div>
+      <div class="form-group">  <label>When Activated:</label><input type="date" id="activatedOn" data-date-format="DD-MM-YYYY" name="activatedOn"  value="<%= user.rationDetails.activatedOn %>"><br></div>
+    <div class="form-group">    <label>Has Disease:</label><select type="text" id="hasDisease" name="hasDisease" value="<%= user.healthDetails.hasDisease %>"><option value="no">No</option>
+    <option value="yes">Yes</option></select><br></div>
+    <div class="form-group">    <label>Disease Name:</label><input type="text" name="diseaseName" value="<%= user.healthDetails.diseaseName %>"><br></div>
+
+      <div class="form-group">  <label>Disease When:</label><input type="date" id="diseaseDate" name="diseaseDate" value="<%= user.healthDetails.diseaseDate %>"><br></div>
+    <div class="form-group">    <label>Has House (Yes/No):</label><select type="text" name="hasHouse" value="<%= user.ruralHouse.hasHouse %>"><option value="no">No</option>
+    <option value="yes">Yes</option></select><br></div>
+    <div class="form-group">    <label>House Type:</label><select type="text" id="houseType" name="houseType" value="<%= user.ruralHouse.houseType %>"><option value="0">Select</option>
+      <option value="1">PMAY</option>
+      <option value="2">Nirman Shramika</option>
+      <option value="3">Fani</option>
+      <option value="4">Other</option></select><br></div>
+    <div class="form-group">    <label>House Status:</label><select type="text" id="houseStatus" name="houseStatus" value="<%= user.ruralHouse.houseStatus %>"><option value="Complete">Complete</option>
+    <option value="Incomplete">Incomplete</option>
+</select><br></div>
+    <div class="form-group">    <label>House When:</label><input type="date" id="houseDate" name="houseDate" value="<%= user.ruralHouse.houseDate %>"><br></div>
+
+      <div class="form-group">  <label>Katcha/Pakka Ghar:</label><input type="text" name="katchaPakkaGhar" value="<%= user.katchaPakkaGhar %>"><br></div>
+    <div class="form-group">    <label>Handicapped (Yes/No):</label><select type="text" id="isHandicapped" name="isHandicapped" value="<%= user.isHandicapped %>"><option value="no">No</option>
+    <option value="yes">Yes</option></select><br></div>
+    <div class="form-group">    <label>BPL (Yes/No):</label><select type="text" id="bplStatus" name="bplStatus" value="<%= user.bplStatus %>"><option value="no">No</option>
+    <option value="yes">Yes</option></select><br></div>
+    <div class="form-group">    <label>Insurance (Yes/No):</label><select type="text" id="insuranceStatus" name="insuranceStatus" value="<%= user.insuranceStatus %>"><option value="no">No</option>
+    <option value="yes">Yes</option></select><br></div>
+      <div class="form-group">  <label>Qualification:</label><input type="text" name="qualification" value="<%= user.qualification %>"><br></div>
+
+<div class="form-group"><label>Occupation:</label><input type="text" name="occupation" value="<%= user.occupation %>"><br></div>
+      <div class="form-group">  <label>Aadhaar Card No:</label><input type="text" name="aadhaarCardNo" value="<%= user.aadhaarCardNo %>"><br></div>
+      <div class="form-group">  <label>Mobile No:</label><input type="text" name="mobileNo" value="<%= user.mobileNo %>"><br></div>
+        <div class="form-group"><label>Street:</label><input type="text" name="street" value="<%= user.street %>"><br></div>
+      <div class="form-group">  <label>Date of Birth:</label><input type="date" id="dob" name="dob" value="<%= user.dob %>"><br></div>
+
+        <div class="form-group"><label>Bank Account (Yes/No):</label><select type="text" id="bankAccount" name="bankAccount" value="<%= user.bankAccount %>"><option value="no">No</option>
+        <option value="yes">Yes</option></select><br></div>
+        <div class="form-group"><label>Drinking Water (Yes/No):</label><select type="text" id="drinkingWater" name="drinkingWater" value="<%= user.drinkingWater %>"><option value="no">No</option>
+        <option value="yes">Yes</option></select><br></div>
+        <div class="form-group"><label>Cow Shed (Yes/No):</label><select type="text" id="cowShed" name="cowShed" value="<%= user.cowShed %>"><option value="no">No</option>
+        <option value="yes">Yes</option></select><br></div>
+        <div class="form-group"><label>Has Cow (Yes/No):</label><select type="text" id="hasCow" name="hasCow" value="<%= user.hasCow %>"><option value="no">No</option>
+        <option value="yes">Yes</option></select><br></div>
+        <div class="form-group"><label>Landless (Yes/No):</label><select type="text" id="landless" name="landless" value="<%= user.landless %>"><option value="no">No</option>
+        <option value="yes">Yes</option></select><br></div>
+
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

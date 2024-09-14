@@ -4,13 +4,14 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const XLSX = require('xlsx');
 const app = express();
+const dotEnv = require("dotenv");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // Connect to MongoDB
-
+dotEnv.config();
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

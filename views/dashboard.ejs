@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Dashboard</title>
+      <link rel="stylesheet" href="/styles.css">
+      <!-- Add this before the closing </body> tag -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+      <link href="https://cdn.datatables.net/2.1.7/css/dataTables.bootstrap5.css" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/fontawesome.min.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/2.1.7/css/dataTables.jqueryui.css" rel="stylesheet">
+      <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet">
+      <link href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" rel="stylesheet">
+
+   </head>
+   <body>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
+         <div class="container">
+            <a class="navbar-brand" href="/dashboard">Gram Panchayat Survey</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+               <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                     <a class="nav-link" href="/users/logout">Logout</a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
+      <div class="container">
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+               <button class="nav-link active" id="home-tab" onclick="openPage('UploadUser')" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Upload</button>
+            </li>
+            <li class="nav-item" role="presentation">
+               <button class="nav-link" id="profile-tab" onclick="openPage('TableData')" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Search</button>
+            </li>
+            <li class="nav-item" role="presentation">
+               <button class="nav-link" id="contact-tab" onclick="openPage('FormPage')" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">New</button>
+            </li>
+         </ul>
+         <!-- Upload User Tab Content -->
+         <div id="UploadUser" class="tabcontent">
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+               <input type="file" name="file" accept=".xlsx, .xls" required>
+               <button type="submit">Upload</button>
+            </form>
+         </div>
+         <!-- Table Data Tab Content -->
+         <div id="TableData" class="tabcontent container mt-5">
+            <form action="/search" method="POST">
+               <input type="text" name="searchQuery" placeholder="Search by name...">
+               <button id="btnSearch" onclick="myFunction()" type="submit">Search</button>
+            </form>
+            <h3>Beneficiery Details</h3>
+            <table id="usersTable"  class="table table-striped" style="width:100%">
+               <thead>
+                  <tr>
+                     <th>Village</th>
+                     <th>Ward</th>
+                     <th>House</th>
+                     <th>Family</th>
+                     <th>Beneficiery</th>
+                     <th>Father/Husband Name</th>
+                     <th>Aadhaar Card No</th>
+                     <th>EPIC Number</th>
+                     <th>Mobile No</th>
+                     <th>Ration(Y/N)</th>
+                     <th>Ration No</th>
+                     <th>Scheme</th>
+                     <th>When</th>
+                     <th>Has Disease(Y/N)</th>
+                     <th>Disease Name</th>
+                     <th>Disease When</th>
+                     <th>Handicapped </th>
+                     <th>HealthCard (Y/N)</th>
+                     <th>HealthCardNo</th>
+                     <th>Has House</th>
+                     <th>House Type</th>
+                     <th>Landless</th>
+                     <th>Katcha/Pakka Ghar</th>
+                     <th>Qualification</th>
+                     <th>Course</th>
+                     <th>Other</th>
+                     <th>BPL</th>
+                     <th>Insurance</th>
+                     <th>Occupation</th>
+                     <th>Street</th>
+                     <th>Date of Birth</th>
+                     <th>Bank Account</th>
+                     <th>Drinking Water</th>
+                     <th>Cow Shed</th>
+                     <th>Has Cow</th>
+                     <th>Actions</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <% users.forEach(function(user) { %>
+                  <tr>
+                     <td><%= user.village === "1" ? "Inam Dengapadar" : user.village === "2" ? "Hindal" : user.village  === "3" ? "Nandiagada" : user.village === "4" ? "Pathara" : "" %></td>
+                     <td><%= user.ward %></td>
+                     <td><%= user.house %></td>
+                     <td><%= user.family %></td>
+                     <td><%= user.userName %></td>
+                     <td><%= user.fatherHusbandName %></td>
+                     <td><%= user.aadhaarCardNo %></td>
+                     <td><%= user.epicNumber %></td>
+                     <td><%= user.mobileNo %></td>
+                     <td><%= user.rationDetails.ration === false ? "No" : "Yes" %></td>
+                     <td><%= user.rationDetails.rationNo %></td>
+                     <td><%= user.rationDetails.rationType === "1" ? "State" : user.rationDetails.rationType === "2" ? "Central" : "" %></td>
+                     <td><%= user.rationDetails.activatedOn %></td>
+                     <td><%= user.healthDetails.hasDisease === false ? "No" : "Yes" %></td>
+                     <td><%= user.healthDetails.diseaseName %></td>
+                     <td><%= user.healthDetails.diseaseDate %></td>
+                     <td><%= user.healthDetails.isHandicapped === false ? "No" : "Yes" %></td>
+                     <td><%= user.healthDetails.hasHealthCard === false ? "No" : "Yes" %></td>
+                     <td><%= user.healthDetails.healthCardNo %></td>
+                     <td><%= user.ruralHouse.hasHouse %></td>
+                     <td><%= user.ruralHouse.houseType === "1" ? "Rented" : user.ruralHouse.houseType === "2" ? "Shared" : "" %></td>
+                     <td><%= user.ruralHouse.landless === false ? "No" : "Yes" %></td>
+                     <td><%= user.ruralHouse.katchaPakkaGhar === "3" ?  "Katcha" : user.ruralHouse.katchaPakkaGhar === "4" ?  "Pakka" : ""%></td>
+                     <td><%= user.carrer.qualification %></td>
+                     <td><%= user.carrer.course %></td>
+                     <td><%= user.carrer.other %></td>
+                     <td><%= user.bplStatus === false ? "No" : "Yes" %></td>
+                     <td><%= user.insuranceStatus === false ? "No" : "Yes" %></td>
+                     <td><%= user.occupation %></td>
+                     <td><%= user.street %></td>
+                     <td><%= user.dob %></td>
+                     <td><%= user.bankAccount === false ? "No" : "Yes" %></td>
+                     <td><%= user.drinkingWater === false ? "No" : "Yes" %></td>
+                     <td><%= user.cowShed === false ? "No" : "Yes" %></td>
+                     <td><%= user.hasCow === false ? "No" : "Yes" %></td>
+                     <td>
+                        <a class="btn btn-primary btn-xs" href="/edit/<%= user._id %>"><i class="fas fa-edit"></i></a>
+                        <a class="btn btn-danger btn-xs" href="/delete/<%= user._id %>"><i class="fas fa-trash-alt"></i></a>
+                     </td>
+                  </tr>
+                  <% }) %>
+               </tbody>
+            </table>
+         </div>
+         <!-- Form Page Tab Content -->
+         <div id="FormPage" class="tabcontent">
+            <h3>Beneficiery</h3>
+            <form id="addUserForm" action="/submit" method="POST">
+              <div class="form-group">
+                 <label>Village:</label>
+                 <select type="text" id="village" name="village" class="form-control" required>
+                    <option value="">Select</option>
+                    <option value="1">Inam Dengapadar</option>
+                    <option value="2">Hindal</option>
+                    <option value="3">Nandiagada</option>
+                    <option value="4">Pathara</option>
+                 </select>
+                 <br>
+              </div>
+              <div class="form-group">
+                 <label>Ward:</label>
+                 <select id="ward" name="ward" class="form-control" required>
+                    <option value="">Select</option>
+                 </select>
+                 <br>
+              </div>
+              <div class="form-group">
+                 <label>House:</label>
+                 <input type="number" class="form-control" id="houseNo" name="houseNo" required>
+                 <br>
+              </div>
+              <div class="form-group">
+                 <label>Family:</label>
+                 <input type="number" class="form-control" id="familyNo" name="familyNo" required>
+                 <br>
+              </div>
+               <div class="form-group">
+                  <label>Beneficiery :</label><input type="text" class="form-control" name="userName" required><br>
+               </div>
+               <div class="form-group">
+                  <label>Father/Husband Name:</label><input type="text" name="fatherHusbandName" class="form-control" required><br>
+               </div>
+               <div class="form-group"> <label>Aadhaar Card No:</label>
+                 <input type="text" class="form-control" id="aadhar" onchange="checkAadhar(this.value)" name="aadhaarCardNo"><br>
+                 <small id="aadharError" class="form-text text-danger" style="display: none;">Invalid Aadhar Number</small>
+               </div>
+               <div class="form-group"><label>EPIC Number:</label><input type="text" onchange="checkEpic(this.value)" id="epicNumber" name="epicNumber" class="form-control"><br>
+                  <small id="epicError" class="form-text text-danger" style="display: none;">Invalid EPIC Number</small>
+               </div>
+               <div class="form-group">  <label>Mobile No:</label>
+                 <input type="text" class="form-control" id="mobile" name="mobileNo" onchange="checkMobile(this.value)"><br>
+                 <small id="mobileError" class="form-text text-danger" style="display: none;">Invalid Mobile Number</small>
+               </div>
+               <!-- Ration Details -->
+               <h2>Ration Details</h2>
+               <div class="form-group">
+                  <label>Ration (Yes/No):</label>
+                  <select id="hasRation" name="ration" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div id="rationDetails" style="display: none;">
+                  <div class="form-group">
+                     <label>Ration No:</label><input type="text" name="rationNo" class="form-control"><br>
+                  </div>
+                  <div class="form-group">
+                     <label>State/Central:</label>
+                     <select type="text" name="rationType" class="form-control">
+                        <option value="0">Select</option>
+                        <option value="1">State</option>
+                        <option value="2">Central</option>
+                     </select>
+                     <br>
+                  </div>
+                  <div class="form-group"><label>When Activated:</label><input type="date" class="form-control" data-date-format="DD-MM-YYYY" name="activatedOn"><br></div>
+               </div>
+               <!-- Health Details -->
+               <h2>Health Details</h2>
+               <div class="form-group">
+                  <label>Disease (Yes/No):</label>
+                  <select id="hasDisease" name="hasDisease" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div id="healthFields" style="display: none;">
+                  <div class="form-group"><label>Disease Name:</label><input type="text" class="form-control" name="diseaseName"><br></div>
+                  <div class="form-group"><label>Disease When:</label><input type="date" class="form-control" name="diseaseDate"><br></div>
+               </div>
+               <div class="form-group">
+                  <label>Handicapped (Yes/No):</label>
+                  <select name="isHandicapped" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">
+                  <label>Health Card (Yes/No):</label>
+                  <select id="hasHealthCard" name="hasHealthCard" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div id="healthCardFields" style="display: none;">
+                  <div class="form-group"><label>Health Card No:</label><input type="text" class="form-control" name="healthCardNo"><br></div>
+               </div>
+               <!-- Rural House Details -->
+               <h2>Rural House Details</h2>
+               <div class="form-group">
+                  <label>Has House (Yes/No):</label>
+                  <select id="hasHouse" onchange="checkHouse(this.value)" name="hasHouse" class="form-control">
+                     <option value="0">Select</option>
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div id="hd" style="display: none;">
+                  <div class="form-group">
+                     <label>House Type :</label>
+                     <select name="houseType" id="houseType" class="form-control">
+                        <option value="0">Select</option>
+                        <option value="1">Rented</option>
+                        <option value="2">Shared</option>
+                     </select>
+                     <br>
+                  </div>
+                  <div class="form-group">
+                     <label>Landless (Yes/No):</label>
+                     <select name="landless" class="form-control">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                     </select>
+                     <br>
+                  </div>
+               </div>
+               <!-- Other Details -->
+               <div id="kpd" style="display: none;">
+                  <div class="form-group">
+                     <label>House Type:</label>
+                     <select name="katchaPakkaGhar" id="katchaPakkaGhar" class="form-control">
+                        <option value="0">Select</option>
+                        <option value="3">Katcha</option>
+                        <option value="4">Pakka</option>
+                     </select>
+                     <br>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label>BPL (Yes/No):</label>
+                  <select name="bplStatus" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">
+                  <label>Insurance (Yes/No):</label>
+                  <select name="insuranceStatus" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">  <label>Qualification:</label>
+                  <select type="text" onchange="getCourse(this.value)" class="form-control" id="qualification" name="qualification">
+                    <option value="">Select Qualification</option>
+                    <option value="highschool">High School (10th)</option>
+                    <option value="intermediate">Intermediate (12th)</option>
+                    <option value="graduation">Graduation</option>
+                    <option value="postgraduation">Post-Graduation</option>
+                    <option value="diploma">Diploma</option>
+                    <option value="other">Other</option>
+                  </select>
+                    <br>
+               </div>
+               <div class="form-group" id="courseFields" style="display: none">
+                 <div class="form-group">
+                  <label for="courses">Courses</label>
+                  <select class="form-control" id="courses" name="course">
+                    <option value="">Select Course</option>
+                  </select>
+                </div>
+               </div>
+               <div class="form-group" id="otherCourseFields" style="display: none">
+                 <div class="form-group">
+                  <label for="courses">Courses:</label>
+                  <input type="text" class="form-control" id="other" name="other">
+                </div>
+               </div>
+               <div class="form-group">  <label>Occupation:</label><input type="text" class="form-control" name="occupation"><br></div>
+               <div class="form-group">  <label>Street:</label><input type="text" class="form-control" name="street"><br></div>
+               <div class="form-group"> <label>Date of Birth:</label><input type="date" class="form-control" name="dob"><br></div>
+               <div class="form-group">
+                  <label>Bank Account (Yes/No):</label>
+                  <select name="bankAccount" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">
+                  <label>Drinking Water (Yes/No):</label>
+                  <select name="drinkingWater" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">
+                  <label>Cow Shed (Yes/No):</label>
+                  <select name="cowShed" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <div class="form-group">
+                  <label>Has Cow (Yes/No):</label>
+                  <select name="hasCow" class="form-control">
+                     <option value="no">No</option>
+                     <option value="yes">Yes</option>
+                  </select>
+                  <br>
+               </div>
+               <button id="submit" type="submit">Submit</button>
+               <small id="submitError" class="form-text text-danger" style="display: none;">kindly complete name, father/husband name, village and ward</small>
+            </form>
+         </div>
+      </div>
+      <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+      <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdn.datatables.net/2.1.7/js/dataTables.js"></script>
+      <script src="https://cdn.datatables.net/2.1.7/js/dataTables.jqueryui.js"></script>
+      <script src="https://cdn.datatables.net/2.1.7/js/dataTables.bootstrap5.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/fontawesome.min.js"></script>
+      <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+      <script src="/scripts.js" type="text/javascript" ></script>
+      <script>
+      let table = new DataTable("#usersTable", {
+                    scrollX: true,
+                    scrollY: 500
+                });
+                // Function to handle tab switching
+                function openPage(pageName) {
+                    var i;
+                    var x = document.getElementsByClassName("tabcontent");
+                    var tablinks = document.getElementsByClassName("tablinks");
+
+                    // Hide all tab contents
+                    for (i = 0; i < x.length; i++) {
+                        x[i].style.display = "none";
+                    }
+
+                    // Remove 'active' class from all buttons
+                    for (i = 0; i < tablinks.length; i++) {
+                        tablinks[i].className = tablinks[i].className.replace(" active", "");
+                    }
+
+                    // Display the clicked tab content
+                    document.getElementById(pageName).style.display = "block";
+                    console.log(event);console.log(event.currentTarget);
+                    event.currentTarget.className += " active";
+                }
+                $(document).ready(function(){
+                  openPage('UploadUser');
+                })
+      </script>
+   </body>
+</html>

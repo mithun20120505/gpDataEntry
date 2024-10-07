@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const xlsx = require('xlsx');
+const XLSX = require('xlsx');
 const path = require('path');
 const Survey = require('../models/Survey');
 const User = require('../models/User');
@@ -34,8 +34,11 @@ router.post('/upload' , upload.single('file'), async (req, res) => {
         const newUser = new Survey({
           userName: data.userName,
           fatherHusbandName: data.fatherHusbandName,
-          village: data.village,
+          gender:data.gender,
+          village: data.village === "Inam Dengapadar" ? "1" : data.village === "Hindal" ? "2" : data.village === "NANDIAGADA" ? "3" : data.village === "Pathara" ? "4" : "0",
           ward: data.ward,
+          house:data.house,
+          family:data.family,
           epicNumber: data.epicNumber === "" ? "NA" :data.epicNumber,
             rationDetails: {
                 ration: data.ration === 'Yes' ? true : false,
@@ -53,7 +56,7 @@ router.post('/upload' , upload.single('file'), async (req, res) => {
             },
             ruralHouse: {
                 hasHouse: data.hasHouse === 'Yes' ? true : false,
-                houseType: data.houseType === "" ? "NA" :data.diseaseName,
+                  houseType: data.houseType === "" ? "NA" :data.diseaseName,
                 landless: data.landless === "" ? "NA" :data.landless,
                 katchaPakkaGhar: data.katchaPakkaGhar === "" ? "NA" :data.katchaPakkaGhar,
             },
@@ -98,6 +101,7 @@ router.post('/update/:id', async (req, res) => {
             $set: {
               'userName': req.body.userName,
               'fatherHusbandName': req.body.fatherHusbandName,
+              'gender':req.body.gender,
               'village': req.body.village,
               'ward': req.body.ward,
               'house':req.body.houseNo,
@@ -149,9 +153,49 @@ router.post('/update/:id', async (req, res) => {
 
 // Search functionality
 router.post('/search', async (req, res) => {
-  const searchQuery = req.body.searchQuery;
-  const users = await Survey.find({ userName: { $regex: searchQuery, $options: 'i' } });
+  // const searchQuery = req.body.searchQuery;
+  const { userName, familyNo, houseNo, village, ward } = req.query;
+  // Create query object dynamically based on non-empty search parameters
+    const searchQuery = {};
+    if (userName) {
+      searchQuery.userName = { $regex: userName, $options: 'i' }; // Case-insensitive search
+    }
+    if (familyNo) {
+      searchQuery.familyNo = familyNo;
+    }
+    if (houseNo) {
+      searchQuery.houseNo = houseNo;
+    }
+
+    if (village) {
+      searchQuery.village = { $regex: village, $options: 'i' }; // Case-insensitive search
+    }
+
+    if (ward) {
+      searchQuery.ward = ward;
+    }
+
+  const users = await Survey.find(searchQuery);
   res.render('dashboard', { users });
+});
+router.get('/search', async (req, res) => {
+  try {
+    const { userName, familyNo, houseNo, village, ward } = req.query;
+
+    const searchQuery = {};
+    if (userName) searchQuery.userName = { $regex: userName, $options: 'i' };
+    if (familyNo) searchQuery.familyNo = familyNo;
+    if (houseNo) searchQuery.houseNo = houseNo;
+    if (village) searchQuery.village = { $regex: village, $options: 'i' };
+    if (ward) searchQuery.ward = ward;
+
+    const users = await Survey.find(searchQuery);
+    console.log("user : "+ users);
+    // Render only the search results (no layout)
+   res.render('dashboard', { users });
+ } catch (err) {
+   res.status(500).send('Server Error');
+ }
 });
 // Delete user route
 router.get('/delete/:id', async (req, res) => {
@@ -166,12 +210,74 @@ router.get('/edit/:id', async (req, res) => {
   const user = await req.user;
   res.render('editUser', { users,user:user });
 });
+router.get('/addMember/:id', async (req, res) => {
+  const users = await Survey.findById(req.params.id);
+  console.log("user at edit : "+users);
+  const user = await req.user;
+  res.render('addMember', { users,user:user });
+});
+router.post('/addMember/:id', async (req, res) => {
+  try {
+    const newUser = new Survey({
+      userName: req.body.userName,
+      fatherHusbandName: req.body.fatherHusbandName,
+      gender:req.body.gender,
+      village: req.body.village,
+      ward: req.body.ward,
+      house:req.body.houseNo,
+      family:req.body.familyNo,
+      epicNumber: req.body.epicNumber,
+      rationDetails: {
+        ration: req.body.ration === 'yes',
+        rationNo: req.body.rationNo,
+        rationType: req.body.rationType,
+        activatedOn: req.body.activatedOn,
+      },
+      healthDetails: {
+        hasDisease: req.body.hasDisease === 'yes',
+        diseaseName: req.body.diseaseName,
+        diseaseDate: req.body.diseaseDate,
+        isHandicapped: req.body.isHandicapped === 'yes',
+        hasHealthCard: req.body.hasHealthCard === 'yes',
+        healthCardNo: req.body.healthCardNo,
+      },
+      ruralHouse: {
+        hasHouse: req.body.hasHouse === 'yes',
+        houseType: req.body.houseType,
+        landless: req.body.landless === 'yes',
+        katchaPakkaGhar:req.body.katchaPakkaGhar,
+      },
+      carrer:{
+        qualification: req.body.qualification,
+        course:req.body.course,
+        other:req.body.other,
+      },
+      bplStatus: req.body.bplStatus === 'yes',
+      insuranceStatus: req.body.insuranceStatus === 'yes',
+      occupation: req.body.occupation,
+      aadhaarCardNo: req.body.aadhaarCardNo,
+      mobileNo: req.body.mobileNo,
+      street: req.body.street,
+      dob: req.body.dob,
+      bankAccount: req.body.bankAccount === 'yes',
+      drinkingWater: req.body.drinkingWater === 'yes',
+      cowShed: req.body.cowShed === 'yes',
+      hasCow: req.body.hasCow === 'yes',
+    });
+
+    newUser.save().then(() => res.redirect('/dashboard'));
+  } catch (e) {
+    console.error('Error inserting data:', e);
+        res.status(500).json({ message: 'Server error' });
+  }
+})
 router.post('/submit', (req, res) => {
   console.log('Received data:', req.body);
   try {
     const newUser = new Survey({
       userName: req.body.userName,
       fatherHusbandName: req.body.fatherHusbandName,
+      gender:req.body.gender,
       village: req.body.village,
       ward: req.body.ward,
       house:req.body.houseNo,

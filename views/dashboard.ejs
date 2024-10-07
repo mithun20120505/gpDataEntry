@@ -13,27 +13,8 @@
       <link href="https://cdn.datatables.net/2.1.7/css/dataTables.jqueryui.css" rel="stylesheet">
       <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet">
       <link href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.css" rel="stylesheet">
-
    </head>
    <body>
-      <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light shadow">
-         <div class="container">
-            <a class="navbar-brand" href="/dashboard">Gram Panchayat Survey</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-               <ul class="navbar-nav ms-auto">
-                  <li class="nav-item">
-                    <a class="nav-link">Welcome, <%= user.username %>!</a>
-                  </li>
-                  <li class="nav-item">
-                     <a class="nav-link" href="/users/logout">Logout</a>
-                  </li>
-               </ul>
-            </div>
-         </div>
-      </nav> -->
       <%- include('partials/header') %>
       <div class="container">
          <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -56,8 +37,36 @@
          </div>
          <!-- Table Data Tab Content -->
          <div id="TableData" class="tabcontent container mt-5">
-            <form action="/search" method="POST">
-               <input type="text" name="searchQuery" placeholder="Search by name...">
+            <form action="/search" method="GET">
+              <div class="col-md-3">
+                   <!-- <label>Village:</label> -->
+                   <select type="text" id="village" name="village" class="form-control serach" placeholder="Village">
+                      <option value="">Select Village</option>
+                      <option value="1">Inam Dengapadar</option>
+                      <option value="2">Hindal</option>
+                      <option value="3">Nandiagada</option>
+                      <option value="4">Pathara</option>
+                   </select>
+                   <br>
+              </div>
+              <div class="col-md-3">
+                  <!-- <label>Ward:</label> -->
+                  <select id="ward" name="ward" class="form-control search">
+                     <option value="">Select Ward</option>
+                  </select>
+                <br>
+              </div>
+              <div class="col-md-3">
+                <!-- <label for="houseNo" class="form-label">House No</label> -->
+                <input type="text" class="form-control search" id="houseNo" name="houseNo" placeholder="House No">
+              </div>
+              <div class="col-md-3">
+                 <!-- <label for="familyNo" class="form-label">Family No</label> -->
+                 <input type="text" class="form-control search" id="familyNo" name="familyNo" placeholder="family No">
+               </div>
+               <div class="col-md-3">
+                 <input type="text" id="userName" name="userName" placeholder="Search by name...">
+               </div>
                <button id="btnSearch" onclick="myFunction()" type="submit">Search</button>
             </form>
             <h3>Beneficiery Details</h3>
@@ -70,6 +79,7 @@
                      <th>Family</th>
                      <th>Beneficiery</th>
                      <th>Father/Husband Name</th>
+                     <th>Gender</th>
                      <th>Aadhaar Card No</th>
                      <th>EPIC Number</th>
                      <th>Mobile No</th>
@@ -111,6 +121,7 @@
                      <td><%= user.family %></td>
                      <td><%= user.userName %></td>
                      <td><%= user.fatherHusbandName %></td>
+                     <td><%= user.gender  === "1" ? "Male" : user.gender  === "2" ? "Female" : "NA"  %></td>
                      <td><%= user.aadhaarCardNo %></td>
                      <td><%= user.epicNumber %></td>
                      <td><%= user.mobileNo %></td>
@@ -141,7 +152,8 @@
                      <td><%= user.cowShed === false ? "No" : "Yes" %></td>
                      <td><%= user.hasCow === false ? "No" : "Yes" %></td>
                      <td>
-                        <a class="btn btn-primary btn-xs" href="/edit/<%= user._id %>"><i class="fas fa-edit"></i></a>
+                        <a class="btn btn-primary btn-xs" href="/addMember/<%= user._id %>"><i class="fa-solid fa-user-plus"></i></a></br>
+                        <a class="btn btn-primary btn-xs" href="/edit/<%= user._id %>"><i class="fas fa-edit"></i></a></br>
                         <a class="btn btn-danger btn-xs" href="/delete/<%= user._id %>"><i class="fas fa-trash-alt"></i></a>
                      </td>
                   </tr>
@@ -186,6 +198,15 @@
                </div>
                <div class="form-group">
                   <label>Father/Husband Name:</label><input type="text" name="fatherHusbandName" class="form-control" required><br>
+               </div>
+               <div class="form-group">
+                  <label>Gender:</label>
+                  <select id="gender" name="gender" class="form-control">
+                     <option value="0">Select</option>
+                     <option value="1">Male</option>
+                     <option value="2">Female</option>
+                  </select>
+                  <br>
                </div>
                <div class="form-group"> <label>Aadhaar Card No:</label>
                  <input type="text" class="form-control" id="aadhar" onchange="checkAadhar(this.value)" name="aadhaarCardNo"><br>
@@ -420,6 +441,32 @@
                   openPage('UploadUser');
                 })
       </script>
+      <script>
+        document.getElementById('btnSearch').addEventListener('click', function () {
+          // Get form data
+          var userName = document.getElementById('userName').value;
+          var familyNo = document.getElementById('familyNo').value;
+          var houseNo = document.getElementById('houseNo').value;
+          var village = document.getElementById('village').value;
+          var ward = document.getElementById('ward').value;
+
+          // Send AJAX request
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', `/search?userName=${userName}&familyNo=${familyNo}&houseNo=${houseNo}&village=${village}&ward=${ward}`, true);
+
+          xhr.onload = function () {
+            if (xhr.status === 200) {
+              // Insert the response into the search results div
+              document.getElementById('usersTable').innerHTML = xhr.responseText;
+            } else {
+              console.error('Failed to fetch search results');
+            }
+          };
+
+          xhr.send();
+        });
+      </script>
+
       <%- include('partials/footer') %>
    </body>
 </html>

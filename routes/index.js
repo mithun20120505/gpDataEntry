@@ -214,7 +214,7 @@ router.get('/addMember/:id', async (req, res) => {
   const users = await Survey.findById(req.params.id);
   console.log("user at edit : "+users);
   const user = await req.user;
-  res.render('addMember', { users,user:user });
+  res.render('addMember', { users, user:user });
 });
 router.post('/addMember/:id', async (req, res) => {
   try {

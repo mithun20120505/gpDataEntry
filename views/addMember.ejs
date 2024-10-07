@@ -17,7 +17,7 @@
       <form id="addMemberForm" action="/addMember/<%= users._id %>" method="POST">
         <div class="form-group">
            <label>Village:</label>
-           <select type="text" id="village" name="village" class="form-control" required readonly>
+           <select type="text" id="village" name="village" class="form-control" required disabled>
               <option value="">Select</option>
               <option value="1">Inam Dengapadar</option>
               <option value="2">Hindal</option>
@@ -28,7 +28,7 @@
         </div>
         <div class="form-group">
            <label>Ward:</label>
-           <select id="ward" name="ward" class="form-control" required readonly>
+           <select id="ward" name="ward" class="form-control" required disabled>
               <option value="">Select</option>
            </select>
            <br>

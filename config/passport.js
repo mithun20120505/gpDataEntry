@@ -42,7 +42,6 @@ module.exports = function(passport) {
                     if (err){ throw err;}
                     console.log(isMatch);
                     if (isMatch) {
-                      console.log(user);
                         return done(null, user);
                     } else {
                       console.log("incorrect");
@@ -57,13 +56,17 @@ module.exports = function(passport) {
         done(null, user.id);
     });
 
-    passport.deserializeUser(async (id, done) => {
+    passport.deserializeUser((id, done) => {
       try {
           const user = User.findById(id);
+          console.log("user :"+ user);
               done(null, user);
       } catch (err) {
+        console.log("error :"+ err);
           done(err, null);
       }
-
+      //   User.findById(id, (err, user) => {
+      //   done(err, user);
+      // });
     });
 };

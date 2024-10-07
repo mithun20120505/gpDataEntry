@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gram Panchayat Data Entry</title>
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
@@ -13,42 +14,50 @@
     <h1>Gram Panchayat Data Entry Form</h1>
     <form action="/submit" method="POST">
       <div class="form-group">
-        <label>User Name:</label><input type="text" name="userName" required><br>
+        <label>User Name:</label><input type="text" class="form-control" name="userName" required><br>
       </div>
       <div class="form-group">
-        <label>Father/Husband Name:</label><input type="text" name="fatherHusbandName" required><br></div>
-        <div class="form-group">
-        <label>Village:</label><input type="text" name="village" required><br></div>
-        <div class="form-group"><label>Ward:</label><input type="text" name="ward" required><br></div>
-        <div class="form-group"><label>EPIC Number:</label><input type="text" name="epicNumber" required><br></div>
+        <label>Father/Husband Name:</label><input type="text" name="fatherHusbandName" class="form-control" required><br>
+      </div>
+      <div class="form-group">
+        <label>Village:</label><input type="text" name="village" class="form-control" required><br>
+      </div>
+        <div class="form-group"><label>Ward:</label><input type="text" name="ward" class="form-control" required><br>
+      </div>
+        <div class="form-group"><label>EPIC Number:</label><input type="text" name="epicNumber" class="form-control" required><br>
+      </div>
 
         <!-- Ration Details -->
         <h2>Ration Details</h2>
-        <div class="form-group"><label>Ration No:</label><input type="text" name="rationNo"><br></div>
-        <div class="form-group"><label>State/Central:</label><select type="text" name="rationType"><option value="0">Select</option><option value="1">State</option>
-        <option value="2">Central</option>
-    </select><br></div>
-        <div class="form-group"><label>When Activated:</label><input type="date" data-date-format="DD-MM-YYYY" name="activatedOn"><br></div>
+        <div class="form-group">
+          <label>Ration No:</label><input type="text" name="rationNo" class="form-control"><br>
+        </div>
+        <div class="form-group">
+          <label>State/Central:</label><select type="text" name="rationType" class="form-control"><option value="0">Select</option><option value="1">State</option>
+            <option value="2">Central</option>
+          </select><br>
+        </div>
+        <div class="form-group"><label>When Activated:</label><input type="date" class="form-control" data-date-format="DD-MM-YYYY" name="activatedOn"><br></div>
 
         <!-- Health Details -->
         <h2>Health Details</h2>
       <div class="form-group">  <label>Has Disease:</label>
-        <select name="hasDisease">
+        <select name="hasDisease" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
-        <div class="form-group"><label>Disease Name:</label><input type="text" name="diseaseName"><br></div>
-        <div class="form-group"><label>Disease When:</label><input type="date" name="diseaseDate"><br></div>
+        <div class="form-group"><label>Disease Name:</label><input type="text" class="form-control" name="diseaseName"><br></div>
+        <div class="form-group"><label>Disease When:</label><input type="date" class="form-control" name="diseaseDate"><br></div>
 
         <!-- Rural House Details -->
         <h2>Rural House Details</h2>
         <div class="form-group"><label>Has House (Yes/No):</label>
-          <select name="hasHouse">
+          <select name="hasHouse" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
         <div class="form-group"><label>House Type (PMAY, Nirman Shramika, Fani, Other):</label>
-        <select name="houseType">
+        <select name="houseType" class="form-control">
           <option value="0">Select</option>
             <option value="1">PMAY</option>
             <option value="2">Nirman Shramika</option>
@@ -56,62 +65,62 @@
             <option value="4">Other</option>
         </select><br></div>
       <div class="form-group">  <label>House Status (Complete/Incomplete):</label>
-        <select name="houseStatus">
+        <select name="houseStatus" class="form-control">
             <option value="Complete">Complete</option>
             <option value="Incomplete">Incomplete</option>
         </select><br></div>
-        <div class="form-group"><label>House When:</label><input type="date" name="houseDate"><br></div>
+        <div class="form-group"><label>House When:</label><input type="date" class="form-control" name="houseDate"><br></div>
 
         <!-- Other Details -->
       <div class="form-group">  <label>Katcha/Pakka Ghar:</label>
-        <select name="katchaPakkaGhar">
+        <select name="katchaPakkaGhar" class="form-control">
             <option value="Katcha">Katcha</option>
             <option value="Pakka">Pakka</option>
         </select><br></div>
       <div class="form-group">  <label>Handicapped (Yes/No):</label>
-        <select name="isHandicapped">
+        <select name="isHandicapped" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>BPL (Yes/No):</label>
-        <select name="bplStatus">
+        <select name="bplStatus" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>Insurance (Yes/No):</label>
-        <select name="insuranceStatus">
+        <select name="insuranceStatus" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
-      <div class="form-group">  <label>Qualification:</label><input type="text" name="qualification"><br></div>
-      <div class="form-group">  <label>Occupation:</label><input type="text" name="occupation"><br></div>
-      <div class="form-group"> <label>Aadhaar Card No:</label><input type="text" name="aadhaarCardNo"><br></div>
-      <div class="form-group">  <label>Mobile No:</label><input type="text" name="mobileNo"><br></div>
-      <div class="form-group">  <label>Street:</label><input type="text" name="street"><br></div>
-      <div class="form-group"> <label>Date of Birth:</label><input type="date" name="dob"><br></div>
+      <div class="form-group">  <label>Qualification:</label><input type="text" class="form-control" name="qualification"><br></div>
+      <div class="form-group">  <label>Occupation:</label><input type="text" class="form-control" name="occupation"><br></div>
+      <div class="form-group"> <label>Aadhaar Card No:</label><input type="text" class="form-control" name="aadhaarCardNo"><br></div>
+      <div class="form-group">  <label>Mobile No:</label><input type="text" class="form-control" name="mobileNo"><br></div>
+      <div class="form-group">  <label>Street:</label><input type="text" class="form-control" name="street"><br></div>
+      <div class="form-group"> <label>Date of Birth:</label><input type="date" class="form-control" name="dob"><br></div>
       <div class="form-group">
         <label>Bank Account (Yes/No):</label>
-        <select name="bankAccount">
+        <select name="bankAccount" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>Drinking Water (Yes/No):</label>
-        <select name="drinkingWater">
+        <select name="drinkingWater" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>Cow Shed (Yes/No):</label>
-        <select name="cowShed">
+        <select name="cowShed" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>Has Cow (Yes/No):</label>
-        <select name="hasCow">
+        <select name="hasCow" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>
       <div class="form-group">  <label>Landless (Yes/No):</label>
-        <select name="landless">
+        <select name="landless" class="form-control">
             <option value="no">No</option>
             <option value="yes">Yes</option>
         </select><br></div>

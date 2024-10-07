@@ -1,10 +1,14 @@
 module.exports = {
     ensureAuthenticated: function (req, res, next) {
+          // if (req.session.user) {
+          //   return next(); // User is authenticated, proceed to the requested page
+          // }
+          // res.redirect('/users');
         if (req.isAuthenticated()) {
             return next();
         }
         req.flash('error_msg', 'Please log in to view this resource');
-        res.redirect('/users/login');
+        res.redirect('/users');
     },
 
     ensureAdmin: function (req, res, next) {

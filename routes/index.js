@@ -4,6 +4,7 @@ const multer = require('multer');
 const xlsx = require('xlsx');
 const path = require('path');
 const Survey = require('../models/Survey');
+const User = require('../models/User');
 const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
 
 // Multer configuration for file uploads
@@ -18,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Handle Excel file upload
-router.post('/upload', upload.single('file'), async (req, res) => {
+router.post('/upload' , upload.single('file'), async (req, res) => {
   const file = XLSX.readFile(req.file.path);
   // Assuming the data is in the first sheet
       const sheetName = file.SheetNames[0];
@@ -84,10 +85,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     });
 res.status(200).json({ message: 'Data uploaded successfully' });
 });
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboard',ensureAuthenticated, async (req, res) => {
 const users = await Survey.find();
+const user = await req.user;
 console.log("user at users : "+ users);
-res.render('dashboard', { users });
+console.log("user at req.users : "+ user);
+res.render('dashboard', { users, user: user });
 });
 router.post('/update/:id', async (req, res) => {
   try {
@@ -158,9 +161,10 @@ router.get('/delete/:id', async (req, res) => {
 });
 // Edit user route
 router.get('/edit/:id', async (req, res) => {
-  const user = await Survey.findById(req.params.id);
-  console.log("user at edit : "+user);
-  res.render('editUser', { user });
+  const users = await Survey.findById(req.params.id);
+  console.log("user at edit : "+users);
+  const user = await req.user;
+  res.render('editUser', { users,user:user });
 });
 router.post('/submit', (req, res) => {
   console.log('Received data:', req.body);

@@ -30,6 +30,17 @@
         <div class="card-header text-center">
           <h4>Login</h4>
         </div>
+        <% if (error_msg) { %>
+          <div class="alert alert-danger">
+            <%= error_msg %>
+          </div>
+        <% } %>
+        <% if (success_msg) { %>
+          <div class="alert alert-success">
+            <%= success_msg %>
+          </div>
+        <% } %>
+
         <div class="card-body">
 
           <form action="/users/login" method="POST">

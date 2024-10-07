@@ -6,10 +6,10 @@ const User = require('../models/User');
 const { ensureAuthenticated, ensureAdmin, forwardAuthenticated } = require('../config/auth');
 
 // Login Page
-router.get('/login', forwardAuthenticated, (req, res) => res.render('login'));
+router.get('/', (req, res) => res.render('login'));
 
 // Register Page
-router.get('/register', ensureAdmin, (req, res) => res.render('register'));
+router.get('/register', (req, res) => res.render('register'));
 
 // Register Handle
 router.post('/register', (req, res) => {
@@ -70,12 +70,13 @@ router.post('/register', (req, res) => {
                 bcrypt.genSalt(10, (err, salt) => {
                     bcrypt.hash(newUser.password, salt, (err, hash) => {
                         if (err) throw err;
+                        console.log("hash : "+hash);
                         newUser.password = hash;
                         newUser
                             .save()
                             .then(user => {
                                 req.flash('success_msg', 'You are now registered and can log in');
-                                res.redirect('/users/login');
+                                res.redirect('/users');
                             })
                             .catch(err => console.log(err));
                     });
@@ -89,16 +90,29 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res, next) => {
     passport.authenticate('local', {
         successRedirect: '/dashboard',
-        failureRedirect: '/users/login',
+        failureRedirect: '/users',
         failureFlash: true
     })(req, res, next);
 });
 
 // Logout Handle
 router.get('/logout', (req, res) => {
-    // req.logout();
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     return res.redirect('/dashboard'); // Error handling if needed
+  //   }
+  //   res.clearCookie('connect.sid'); // Clear session cookie
+  //   res.redirect('/users'); // Redirect to login page
+  // });
+    // req.flash('success_msg', 'You are logged out');
+    // res.redirect('/users');
+    req.logout((err) => {
+    if (err) {
+      return next(err); // Handle error properly
+    }
     req.flash('success_msg', 'You are logged out');
-    res.redirect('/users/login');
+    res.redirect('/users'); // Redirect to login page after logout
+  });
 });
 
 module.exports = router;

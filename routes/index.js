@@ -22,71 +22,97 @@ const upload = multer({ storage: storage });
 router.post('/upload' , upload.single('file'), async (req, res) => {
   const file = XLSX.readFile(req.file.path);
   // Assuming the data is in the first sheet
+      var headers = [];
       const sheetName = file.SheetNames[0];
       const worksheet = file.Sheets[sheetName];
+      var range = XLSX.utils.decode_range(worksheet['!ref']);
+      var C, R = range.s.r;
+      /* start in the first row */
+      /* walk every column in the range */
+      for (C = range.s.c; C <= range.e.c; ++C) {
+          var cell = worksheet[XLSX.utils.encode_cell({c: C, r: R})];
+          /* find the cell in the first row */
+
+          var hdr = "UNKNOWN " + C; // <-- replace with your desired default
+          if (cell && cell.t) {
+              hdr = XLSX.utils.format_cell(cell);
+          }
+          headers.push(hdr);
+      }
       // Convert the sheet data to JSON
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
       console.log("jsonData : "+ jsonData);
+
       if (jsonData.length === 0) {
           return res.status(400).send('The uploaded file is empty or not formatted correctly.');
       }
-      jsonData.forEach(async (data) => {
-        const newUser = new Survey({
-          userName: data.userName,
-          fatherHusbandName: data.fatherHusbandName,
-          gender:data.gender,
-          village: data.village === "Inam Dengapadar" ? "1" : data.village === "Hindal" ? "2" : data.village === "NANDIAGADA" ? "3" : data.village === "Pathara" ? "4" : "0",
-          ward: data.ward,
-          house:data.house,
-          family:data.family,
-          epicNumber: data.epicNumber === "" ? "NA" :data.epicNumber,
-            rationDetails: {
-                ration: data.ration === 'Yes' ? true : false,
-                rationNo: data.rationNo === "" ? "NA" :data.rationNo,
-                rationType: data.rationType === "" ? "NA" :data.rationType,
-                activatedOn: data.activatedOn === "" ? "NA" :data.activatedOn,
-            },
-            healthDetails: {
-                hasDisease: data.hasDisease === 'Yes' ? true : false,
-                diseaseName: data.diseaseName === "" ? "NA" :data.diseaseName,
-                diseaseDate: data.diseaseDate === "" ? "NA" :data.diseaseDate ,
-                isHandicapped: data.isHandicapped === 'Yes' ? true : false,
-                hasHealthCard: data.hasHealthCard === "" ? "NA" :data.hasHealthCard ,
-                healthCardNo: data.healthCardNo === "" ? "NA" :data.healthCardNo,
-            },
-            ruralHouse: {
-                hasHouse: data.hasHouse === 'Yes' ? true : false,
-                  houseType: data.houseType === "" ? "NA" :data.diseaseName,
-                landless: data.landless === "" ? "NA" :data.landless,
-                katchaPakkaGhar: data.katchaPakkaGhar === "" ? "NA" :data.katchaPakkaGhar,
-            },
-            carrer:{
-              qualification: data.qualification === "" ? "NA" :data.qualification,
-              course:data.course === "" ? "NA" :data.course,
-              other:data.other === "" ? "NA" :data.other,
-            },
-            bplStatus: data.bplStatus === 'Yes' ? true : false,
-            insuranceStatus: data.insuranceStatus === 'Yes' ? true : false,
-            occupation: data.occupation === "" ? "NA" :data.occupation,
-            aadhaarCardNo: data.aadhaarCardNo === "" ? "NA" :data.aadhaarCardNo,
-            mobileNo: data.mobileNo === "" ? "NA" :data.mobileNo,
-            street: data.street === "" ? "NA" :data.street,
-            dob: data.dob === "" ? "NA" :data.dob,
-            bankAccount: data.bankAccount === 'Yes' ? true : false,
-            drinkingWater: data.drinkingWater === 'Yes' ? true : false,
-            cowShed: data.cowShed === 'Yes' ? true : false,
-            hasCow: data.hasCow === 'Yes' ? true : false
+      if (jsonData.length > 0) {
+      jsonData.forEach(function (row) {
+            // Set empty cell to ''.
+            headers.forEach(function (hd) {
+                if (row[hd] == undefined) {
+                    row[hd] = '';
+                }
+            });
         });
-        try {
-          await newUser.save();
-          //res.status(200).send('Data uploaded successfully!');
-        } catch (e) {
-          console.error(e);
-          res.status(500).send('Error saving data to the database.');
-        }
+      }
+      try {
+        jsonData.forEach(async (data) => {
+          const newUser = new Survey({
+            userName: data.userName == undefined || "" ? "" : data.userName.trim().toLowerCase(),
+            fatherHusbandName: data.father == undefined || "" ? "" : data.father.trim().toLowerCase(),
+            gender: data.gender == undefined || "" ? "" : data.gender.toLowerCase().trim() === "male" || "m" ? "1" : data.gender.toLowerCase() === "female" || "f" ? "2" : "",
+            village: data.village == undefined || "" ? "" : data.village.toLowerCase().trim() === "inam dengapadar" || "dengapadar" || "dp" ? "1" : data.village.toLowerCase() === "hindal" || "hindol" || "hindola" ? "2" : data.village.toLowerCase() === "nandiagada" || "ng" ? "3" : data.village.toLowerCase() === "pathara" ? "4" : "0",
+            ward: data.ward,
+            house:data.house,
+            family:data.family,
+            epicNumber: data.epicNumber == undefined || "" ? "" :data.epicNumber,
+              rationDetails: {
+                  ration: data.ration == undefined || "" ? false : data.ration.toLowerCase() === 'yes' || "y" ? true : false,
+                  rationNo: data.rationNo == undefined || "" ? "" :data.rationNo,
+                  rationType: data.rationType == undefined || "" ? "" :data.rationType,
+                  activatedOn: data.activatedOn == undefined || "" ? "" :data.activatedOn,
+              },
+              healthDetails: {
+                  hasDisease: data.hasDisease == undefined || "" ? "" : data.hasDisease.toLowerCase() === 'yes' || "y" ? true : false,
+                  diseaseName: data.diseaseName == undefined || "" ? "" : data.diseaseName.trim().toLowerCase() === "" ? "NA" :data.diseaseName.toLowerCase(),
+                  diseaseDate: data.diseaseDate == undefined || "" ? "" : data.diseaseDate,
+                  isHandicapped: data.isHandicapped == undefined || "" ? "" : data.isHandicapped.toLowerCase() === 'yes' || "y" ? true : false,
+                  hasHealthCard: data.hasHealthCard == undefined || "" ? "" : data.hasHealthCard.toLowerCase() === 'yes' || "y" ? true : false,
+                  healthCardNo: data.healthCardNo == undefined || "" ? "" : data.healthCardNo,
+              },
+              ruralHouse: {
+                  hasHouse: data.hasHouse == undefined || "" ? "" : data.hasHouse.toLowerCase() === 'yes' || "y" ? true : false,
+                  houseType: data.houseType == undefined || "" ? "" : data.houseType,
+                  landless: data.hasHouse == undefined || "" ? "" : data.hasHouse.toLowerCase() === 'yes' || "y" ? true : false,
+                  katchaPakkaGhar: data.katchaPakkaGhar == undefined || "" ? "" : data.katchaPakkaGhar.toLowerCase() === "" ? "NA" :data.katchaPakkaGhar.toLowerCase(),
+              },
 
-    });
-res.status(200).json({ message: 'Data uploaded successfully' });
+              carrer:{
+                qualification: data.qualification == undefined || "" ? "NA" :data.qualification.toLowerCase(),
+                course:data.course == undefined || "" ? "NA" : data.course.toLowerCase(),
+                other:data.other == undefined || "" ? "NA" :data.other.toLowerCase(),
+              },
+              bplStatus: data.bplStatus == undefined || "" ? false : data.bplStatus.toLowerCase() == 'yes' || "y" ? true : false,
+              insuranceStatus: data.insuranceStatus == undefined || "" ? false : data.insuranceStatus.toLowerCase() === 'yes' || "y" ? true : false,
+              occupation: data.occupation == undefined || "" ? "" :data.occupation.toLowerCase(),
+              aadhaarCardNo: data.aadhaarCardNo == undefined || "" ? "" :data.aadhaarCardNo,
+              mobileNo: data.mobileNo == undefined || "" ? "" :data.mobileNo,
+              street: data.street == undefined || "" ? "" :data.street.toLowerCase(),
+              dob: data.dob == undefined || "" ? "" :data.dob,
+              bankAccount: data.bankAccount == undefined || "" ? false : data.bankAccount.toLowerCase() === 'yes' || "y" ? true : false,
+              drinkingWater: data.drinkingWater == undefined || "" ? false : data.drinkingWater.toLowerCase() === 'yes' || "y" ? true : false,
+              cowShed: data.cowShed  == undefined || "" ? false : data.cowShed.toLowerCase() === 'yes' || "y" ? true : false,
+              hasCow: data.hasCow == undefined || "" ? false : data.hasCow.toLowerCase() === 'yes' || "y" ? true : false
+          });
+            await newUser.save();
+        });
+        res.status(200).json({ message: 'Data uploaded successfully' });
+      } catch (e) {
+        console.error(e);
+        res.status(500).send('Error saving data to the database.');
+      }
+
 });
 router.get('/dashboard',ensureAuthenticated, async (req, res) => {
 const users = await Survey.find();

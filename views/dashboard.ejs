@@ -135,7 +135,7 @@
                      <td><%= user.healthDetails.isHandicapped === false ? "No" : "Yes" %></td>
                      <td><%= user.healthDetails.hasHealthCard === false ? "No" : "Yes" %></td>
                      <td><%= user.healthDetails.healthCardNo %></td>
-                     <td><%= user.ruralHouse.hasHouse %></td>
+                     <td><%= user.ruralHouse.hasHouse === false ? "No" : "Yes" %></td>
                      <td><%= user.ruralHouse.houseType === "1" ? "Rented" : user.ruralHouse.houseType === "2" ? "Shared" : "" %></td>
                      <td><%= user.ruralHouse.landless === false ? "No" : "Yes" %></td>
                      <td><%= user.ruralHouse.katchaPakkaGhar === "3" ?  "Katcha" : user.ruralHouse.katchaPakkaGhar === "4" ?  "Pakka" : ""%></td>
@@ -457,7 +457,10 @@
           xhr.onload = function () {
             if (xhr.status === 200) {
               // Insert the response into the search results div
+              openPage('TableData');
               document.getElementById('usersTable').innerHTML = xhr.responseText;
+
+
             } else {
               console.error('Failed to fetch search results');
             }

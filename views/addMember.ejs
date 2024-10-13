@@ -240,16 +240,16 @@
          <div class="form-group">  <label>Date of Birth:</label><input type="date" class="form-control" id="dob" name="dob"><br></div>
          <div class="form-group">
             <label>Blood Group:</label>
-            <select name="bg" class="form-control">
-              <option value="1">Select Blood Group</option>
-               <option value="1">A positive (A+)</option>
-               <option value="2">A negative (A-)</option>
-               <option value="3">B positive (B+)</option>
-               <option value="4">B negative (B-)</option>
-               <option value="5">AB positive (AB+)</option>
-               <option value="6">AB negative (AB-)</option>
-               <option value="7">O positive (O+)</option>
-               <option value="8">O negative (O-)</option>
+            <select name="bg" id="bg" class="form-control">
+              <option value="">Select</option>
+               <option value="A+">A+</option>
+               <option value="A-">A-</option>
+               <option value="B+">B+</option>
+               <option value="B-">B-</option>
+               <option value="AB+">AB+</option>
+               <option value="AB-">AB-</option>
+               <option value="O+">O+</option>
+               <option value="O-">O-</option>
             </select>
             <br>
          </div>
@@ -315,6 +315,8 @@
          window.onload = function() {
            $("#houseNo").val(<%= users.house %>);
            $("#familyNo").val(<%= users.family %>);
+           var bg = convert("<%= users.bg %>");
+           $('#bg').val(bg);
          }
          $(document).ready(function () {
 

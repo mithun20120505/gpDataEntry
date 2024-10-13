@@ -100,7 +100,7 @@ router.post('/upload' , upload.single('file'), async (req, res) => {
               mobileNo: data.mobileNo == undefined || "" ? "" :data.mobileNo,
               street: data.street == undefined || "" ? "" :data.street.toLowerCase(),
               dob: data.dob == undefined || "" ? "" :data.dob,
-              bg: data.bg == undefined || "" || "0" ? "0" : data.bg.toLowerCase() === "a+" ? "1" : data.bg.toLowerCase() === "a-" ? "2" : data.bg.toLowerCase() === "b+" ? "3" :data.bg.toLowerCase() === "b-" ? "4" : data.bg.toLowerCase() === "ab+" ? "5" : data.bg.toLowerCase() === "ab-" ? "6" : data.bg.toLowerCase() === "o+" ? "7" : data.bg.toLowerCase() === "o-" ? "8" : "0",
+              bg: data.bg == undefined || "" ? "" : data.bg.toLowerCase() === "a+" ? "A+" : data.bg.toLowerCase() === "a-" ? "A-" : data.bg.toLowerCase() === "b+" ? "B+" :data.bg.toLowerCase() === "b-" ? "B-" : data.bg.toLowerCase() === "ab+" ? "AB+" : data.bg.toLowerCase() === "ab-" ? "AB-" : data.bg.toLowerCase() === "o+" ? "O+" : data.bg.toLowerCase() === "o-" ? "O-" : "",
               bankAccount: data.bankAccount == undefined || "" ? false : data.bankAccount.toLowerCase() === 'yes' || "y" ? true : false,
               drinkingWater: data.drinkingWater == undefined || "" ? false : data.drinkingWater.toLowerCase() === 'yes' || "y" ? true : false,
               cowShed: data.cowShed  == undefined || "" ? false : data.cowShed.toLowerCase() === 'yes' || "y" ? true : false,

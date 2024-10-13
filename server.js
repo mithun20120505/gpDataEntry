@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const XLSX = require('xlsx');
@@ -10,7 +10,7 @@ const app = express();
 const dotEnv = require("dotenv");
 const LocalStrategy = require('passport-local').Strategy;
 const { ensureAuthenticated, forwardAuthenticated } = require('./config/auth');
-
+const logger = require('./log/logger');
 // app.use((req, res, next) => {
 //   res.locals.user = req.user || null;
 //   next();
@@ -46,7 +46,31 @@ app.use((req, res, next) => {
     res.locals.user = req.user || null;
     next();
 });
+app.use((req, res, next) => {
+  console.log(`Accessing: ${req.path}`);
+  console.log(`Authenticated: ${req.isAuthenticated()}`);
+  const publicRoutes = ['/users','/users/login', '/users/register', '/users/logout'];
 
+  if (publicRoutes.includes(req.path) ) {
+    console.log('Proceeding to the next middleware');
+    return next();
+  }
+  // Check if the user is authenticated
+  if (req.isAuthenticated()) {
+    console.log('User authenticated');
+    return next();  // User is authenticated, continue
+  }
+  // If not authenticated and trying to access a protected route, redirect to login
+  console.log('Redirecting to login page');
+  req.flash('error_msg', 'Please log in to access this resource');
+  return res.redirect('/users');
+});
+// 404 page for unidentified routes
+// app.use((req, res, next) => {
+//   res.status(404);
+//   req.flash('error_msg', 'Page not found. Please log in to access the website.');
+//   res.redirect('/login');
+// });
 app.set('view engine', 'ejs');
 
 // Connect to MongoDB
@@ -64,5 +88,6 @@ app.use('/users', require('./routes/users'));
 // const upload = multer({ dest: 'uploads/' });
 
 app.listen(3000, () => {
+  logger.info('Server started on port 3000');
   console.log('Server started on port 3000');
 });

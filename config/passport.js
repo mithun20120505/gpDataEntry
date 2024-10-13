@@ -25,6 +25,7 @@
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const logger = require('../log/logger');
 
 module.exports = function(passport) {
     passport.use(new LocalStrategy({ usernameField: 'username' }, (username, password, done) => {
@@ -42,9 +43,11 @@ module.exports = function(passport) {
                     if (err){ throw err;}
                     console.log(isMatch);
                     if (isMatch) {
+                      logger.info("user is logged in : ", username)
                         return done(null, user);
                     } else {
                       console.log("incorrect");
+                      logger.info("user is not logged in due to incorrect password : ", username)
                         return done(null, false, { message: 'Incorrect password' });
                     }
                 });

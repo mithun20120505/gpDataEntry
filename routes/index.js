@@ -6,7 +6,7 @@ const path = require('path');
 const Survey = require('../models/Survey');
 const User = require('../models/User');
 const { ensureAuthenticated, forwardAuthenticated } = require('../config/auth');
-
+const logger = require('../log/logger');
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -100,6 +100,7 @@ router.post('/upload' , upload.single('file'), async (req, res) => {
               mobileNo: data.mobileNo == undefined || "" ? "" :data.mobileNo,
               street: data.street == undefined || "" ? "" :data.street.toLowerCase(),
               dob: data.dob == undefined || "" ? "" :data.dob,
+              bg: data.bg == undefined || "" || "0" ? "0" : data.bg.toLowerCase() === "a+" ? "1" : data.bg.toLowerCase() === "a-" ? "2" : data.bg.toLowerCase() === "b+" ? "3" :data.bg.toLowerCase() === "b-" ? "4" : data.bg.toLowerCase() === "ab+" ? "5" : data.bg.toLowerCase() === "ab-" ? "6" : data.bg.toLowerCase() === "o+" ? "7" : data.bg.toLowerCase() === "o-" ? "8" : "0",
               bankAccount: data.bankAccount == undefined || "" ? false : data.bankAccount.toLowerCase() === 'yes' || "y" ? true : false,
               drinkingWater: data.drinkingWater == undefined || "" ? false : data.drinkingWater.toLowerCase() === 'yes' || "y" ? true : false,
               cowShed: data.cowShed  == undefined || "" ? false : data.cowShed.toLowerCase() === 'yes' || "y" ? true : false,
@@ -107,19 +108,24 @@ router.post('/upload' , upload.single('file'), async (req, res) => {
           });
             await newUser.save();
         });
-        res.status(200).json({ message: 'Data uploaded successfully' });
+        logger.info('Data uploaded successfully');
+        const users = await Survey.find();
+        const user = await req.user;
+        req.flash('success_msg', 'Data has been successfully uploaded!');
+        res.render('dashboard', { users, user: user });
       } catch (e) {
         console.error(e);
+        logger.error(e);
         res.status(500).send('Error saving data to the database.');
       }
 
 });
 router.get('/dashboard',ensureAuthenticated, async (req, res) => {
-const users = await Survey.find();
-const user = await req.user;
-console.log("user at users : "+ users);
-console.log("user at req.users : "+ user);
-res.render('dashboard', { users, user: user });
+    const users = await Survey.find();
+    const user = await req.user;
+    console.log("user at users : "+ users);
+    console.log("user at req.users : "+ user);
+    res.render('dashboard', { users, user: user });
 });
 router.post('/update/:id', async (req, res) => {
   try {
@@ -158,6 +164,7 @@ router.post('/update/:id', async (req, res) => {
                 'mobileNo': req.body.mobileNo,
                 'street': req.body.street,
                 'dob': req.body.dob,
+                'bg': req.body.bg,
                 'bankAccount': req.body.bankAccount === 'yes' ? true : false,
                 'drinkingWater': req.body.drinkingWater === 'yes' ? true : false,
                 'cowShed': req.body.cowShed === 'yes' ? true : false,
@@ -168,11 +175,15 @@ router.post('/update/:id', async (req, res) => {
 
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
+            logger.info("info is not updated for ", req.params.id);
+        }else {
+          logger.info("info is updated for ", req.params.id);
         }
         res.redirect('/dashboard');
         // res.status(200).json(updatedUser);
     } catch (error) {
         console.error('Error updating user:', error);
+        logger.error('Error updating user:', error)
         res.status(500).json({ message: 'Server error' });
     }
 });
@@ -221,13 +232,20 @@ router.get('/search', async (req, res) => {
    res.render('dashboard', { users });
  } catch (err) {
    res.status(500).send('Server Error');
+   logger.error(err);
  }
 });
 // Delete user route
 router.get('/delete/:id', async (req, res) => {
-  await Survey.findByIdAndDelete(req.params.id);
-  const users = await Survey.find();
-  res.render('dashboard', {users});
+  try {
+    await Survey.findByIdAndDelete(req.params.id);
+    const users = await Survey.find();
+    logger.info("user is deleted for ", req.params.id)
+    res.render('dashboard', {users});
+  } catch (e) {
+    logger.error(e);
+  }
+
 });
 // Edit user route
 router.get('/edit/:id', async (req, res) => {
@@ -294,7 +312,8 @@ router.post('/addMember/:id', async (req, res) => {
     newUser.save().then(() => res.redirect('/dashboard'));
   } catch (e) {
     console.error('Error inserting data:', e);
-        res.status(500).json({ message: 'Server error' });
+    logger.error(e);
+    res.status(500).json({ message: 'Server error' });
   }
 })
 router.post('/submit', (req, res) => {
@@ -341,6 +360,7 @@ router.post('/submit', (req, res) => {
       mobileNo: req.body.mobileNo,
       street: req.body.street,
       dob: req.body.dob,
+      bg:req.body.bg,
       bankAccount: req.body.bankAccount === 'yes',
       drinkingWater: req.body.drinkingWater === 'yes',
       cowShed: req.body.cowShed === 'yes',
@@ -350,7 +370,8 @@ router.post('/submit', (req, res) => {
     newUser.save().then(() => res.redirect('/dashboard'));
   } catch (e) {
     console.error('Error inserting data:', e);
-        res.status(500).json({ message: 'Server error' });
+    logger.error(e)
+    res.status(500).json({ message: 'Server error' });
   }
 
 });

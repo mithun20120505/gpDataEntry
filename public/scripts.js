@@ -145,23 +145,24 @@ function getCourse(val){
     }
   // });
 }
-  document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
+function getWard(val){
     const villageSelect = document.getElementById('village');
     const wardSelect = document.getElementById('ward');
-
+    console.log(villageSelect);
     const villageWardMapping = {
       1: [1, 2, 3],
       2: [4, 5, 6, 7],
       3: [8, 9, 10],
       4: [11, 12, 13, 14]
     };
-    villageSelect.addEventListener('change', function() {
-    const selectedVillage = this.value;
+    // villageSelect.addEventListener('change', function() {
+    const selectedVillage = val;
     console.log(selectedVillage);
     // Clear the existing ward dropdown options
     wardSelect.innerHTML = '<option value="">Select Ward</option>';
 
-    if (selectedVillage) {
+    // if (selectedVillage) {
       // Get the wards for the selected village
       const wards = villageWardMapping[selectedVillage];
 
@@ -172,6 +173,6 @@ function getCourse(val){
         option.textContent = 'Ward ' + ward;
         wardSelect.appendChild(option);
       });
-    }
-  });
-});
+    // }
+  }
+// });

@@ -41,6 +41,7 @@ const SurveySchema = new mongoose.Schema({
   mobileNo: String,
   street: String,
   dob: Date,
+  bg:String,
   bankAccount: Boolean,
   drinkingWater: Boolean,
   cowShed: Boolean,

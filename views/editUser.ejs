@@ -342,7 +342,7 @@
                      option.textContent = 'Ward ' + ward;
                      wardSelect.appendChild(option);
                    });
-                   $("#ward").val(<%= user.ward %>);
+                   $("#ward").val(<%= users.ward %>);
                }
                $("#qualification").val("<%= users.carrer.qualification %>");
                getCourse("<%= users.carrer.qualification %>");
@@ -362,8 +362,7 @@
                 $('#diseaseDate').val(diseaseDate);
                 var dob = convert("<%= users.dob %>");
                 $('#dob').val(dob);
-                var bg = convert("<%= users.bg %>");
-                $('#bg').val(bg);
+                $('#bg').val("<%= users.bg %>");
            });
       </script>
       <script>

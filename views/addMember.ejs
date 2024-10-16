@@ -51,7 +51,7 @@
       <form id="addMemberForm" action="/addMember/<%= users._id %>" method="POST">
         <div class="form-group">
            <label>Village:</label>
-           <select type="text" id="village" name="village" class="form-control" required disabled>
+           <select type="text" id="village" name="village" class="form-control" required readonly>
               <option value="">Select</option>
               <option value="1">Inam Dengapadar</option>
               <option value="2">Hindal</option>
@@ -62,7 +62,7 @@
         </div>
         <div class="form-group">
            <label>Ward:</label>
-           <select id="ward" name="ward" class="form-control" required disabled>
+           <select id="ward" name="ward" class="form-control" required readonly>
               <option value="">Select</option>
            </select>
            <br>
@@ -115,7 +115,7 @@
             <div class="form-group">    <label>Ration No:</label><input type="text" class="form-control" name="rationNo"><br></div>
             <div class="form-group">
                <label>Scheme:</label>
-               <select type="text" class="form-control" id="rationType" name="rationType" ">
+               <select type="text" class="form-control" id="rationType" name="rationType">
                   <option value="0">Select</option>
                   <option value="1">State</option>
                   <option value="2">Central</option>
@@ -236,7 +236,7 @@
           </div>
          </div>
          <div class="form-group"><label>Occupation:</label><input type="text" class="form-control"  name="occupation" ><br></div>
-         <div class="form-group"><label>Street:</label><input type="text" class="form-control" name="street" ><br></div>
+         <div class="form-group"><label>Street:</label><input type="text" class="form-control" id="street" name="street" ><br></div>
          <div class="form-group">  <label>Date of Birth:</label><input type="date" class="form-control" id="dob" name="dob"><br></div>
          <div class="form-group">
             <label>Blood Group:</label>
@@ -315,8 +315,12 @@
          window.onload = function() {
            $("#houseNo").val(<%= users.house %>);
            $("#familyNo").val(<%= users.family %>);
-           var bg = convert("<%= users.bg %>");
-           $('#bg').val(bg);
+           $('#street').val("<%= users.street %>");
+           $("#cowShed").val(<%= users.cowShed %> === true ? "yes" : "no");
+           $("#hasCow").val(<%= users.hasCow %> === true ? "yes" : "no");
+           $("#landless").val(<%= users.ruralHouse.landless %> === true ? "yes" : "no");
+           $("#drinkingWater").val(<%= users.drinkingWater %> === true ? "yes" : "no");
+
          }
          $(document).ready(function () {
 
@@ -352,7 +356,7 @@
            });
       </script>
       <script>
-          $(document).onload(function(){
+          $(document).ready(function(){
               if($('#hasHouse').val() === 'yes'){
                    console.log("katchaPakkaGhar : "+ <%= users.ruralHouse.katchaPakkaGhar %>)
                    document.getElementById('hd').style.display = 'none';
